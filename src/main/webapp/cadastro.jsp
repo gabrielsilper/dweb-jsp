@@ -17,7 +17,7 @@
 
         boolean isEdit = personToEdit != null;
 
-        String action = isEdit ? "/pessoas?action=saveEdit&person=" + personToEditIndex : "/pessoas?action=save";
+        String action = isEdit ? "/pessoas?action=save&person=" + personToEditIndex : "/pessoas?action=save";
 
         String startTitle = isEdit ? "Editar" : "Cadastro de";
         String nameValue = isEdit ? personToEdit.getName() : "";
