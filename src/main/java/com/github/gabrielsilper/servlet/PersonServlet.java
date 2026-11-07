@@ -73,14 +73,8 @@ public class PersonServlet extends HttpServlet {
         String action = req.getParameter("action");
 
         if ("register".equals(action)) {
+            req.setAttribute("cityList", this.cityList);
             RequestDispatcher dispatcher = req.getRequestDispatcher("cadastro.jsp");
-            dispatcher.forward(req, resp);
-            return;
-        }
-
-        if ("save".equals(action)) {
-            salvarPessoa(req);
-            RequestDispatcher dispatcher = req.getRequestDispatcher("pessoas.jsp");
             dispatcher.forward(req, resp);
             return;
         }
@@ -94,15 +88,30 @@ public class PersonServlet extends HttpServlet {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         String phone = req.getParameter("phone");
-
+        String cityIndex = req.getParameter("city");
         if (name == null || name.isBlank()
                 || email == null || email.isBlank()
                 || phone == null || phone.isBlank()
-        ) {
+                || cityIndex == null || cityIndex.isBlank()) {
             return;
         }
 
-        Person person = new Person(name, email, phone, null);
+        int cityId = Integer.parseInt(cityIndex);
+        City selectedCity = this.cityList.get(cityId);
+
+        Person person = new Person(name, email, phone, selectedCity);
+
         this.personList.add(person);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String action = req.getParameter("action");
+
+        if ("save".equals(action)) {
+            salvarPessoa(req);
+        }
+
+        resp.sendRedirect("/pessoas");
     }
 }

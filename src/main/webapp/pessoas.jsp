@@ -22,6 +22,7 @@
                 <th>Cidade</th>
                 <th>Estado</th>
                 <th>País</th>
+                <th>Ações</th>
             </tr>
         </thead>
     <%
@@ -29,7 +30,8 @@
         List<Person> personList = (List<Person>) request.getAttribute("personList");
 
         if (personList != null) {
-            for(Person person : personList){
+            for(int i = 0; i < personList.size(); i++){
+                Person person = personList.get(i);
     %>
 
         <tbody>
@@ -40,6 +42,10 @@
                 <td><% out.println(person.getCity().getName()); %></td>
                 <td><% out.println(person.getCity().getState().getName()); %></td>
                 <td><% out.println(person.getCity().getState().getCountry().getName()); %></td>
+                <td>
+                    <a href="pessoas?action=edit&id=<%= i %>">Editar</a>
+                    <a href="pessoas?action=delete&id=<%= i %>">Excluir</a>
+                </td>
             </tr>
         </tbody>
 
