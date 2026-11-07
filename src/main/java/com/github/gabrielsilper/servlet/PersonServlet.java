@@ -79,6 +79,33 @@ public class PersonServlet extends HttpServlet {
             return;
         }
 
+        if ("delete".equals(action)) {
+            String personIndex = req.getParameter("id");
+
+            if (personIndex != null && !personIndex.isBlank()) {
+                int index = Integer.parseInt(personIndex);
+                personList.remove(index);
+            }
+
+            resp.sendRedirect("/pessoas");
+            return;
+        }
+
+        if ("edit".equals(action)) {
+            String personIndex = req.getParameter("id");
+            if (personIndex != null && !personIndex.isBlank()) {
+                int index = Integer.parseInt(personIndex);
+                Person person = personList.get(index);
+
+                req.setAttribute("personToEdit", person);
+                req.setAttribute("personToEditIndex", String.valueOf(index));
+                req.setAttribute("cityList", this.cityList);
+
+                RequestDispatcher dispatcher = req.getRequestDispatcher("cadastro.jsp");
+                dispatcher.forward(req, resp);
+            }
+        }
+
         req.setAttribute("personList", this.personList);
         RequestDispatcher dispatcher = req.getRequestDispatcher("pessoas.jsp");
         dispatcher.forward(req, resp);
@@ -104,12 +131,39 @@ public class PersonServlet extends HttpServlet {
         this.personList.add(person);
     }
 
+    private void editarPessoa(HttpServletRequest req) {
+        String name = req.getParameter("name");
+        String email = req.getParameter("email");
+        String phone = req.getParameter("phone");
+        String cityIndex = req.getParameter("city");
+        String personIndex = req.getParameter("person");
+        if (name == null || name.isBlank()
+                || email == null || email.isBlank()
+                || phone == null || phone.isBlank()
+                || cityIndex == null || cityIndex.isBlank()
+                || personIndex == null || personIndex.isBlank()) {
+            return;
+        }
+
+        int cityId = Integer.parseInt(cityIndex);
+        City selectedCity = this.cityList.get(cityId);
+
+        Person person = new Person(name, email, phone, selectedCity);
+
+        int personId = Integer.parseInt(personIndex);
+        this.personList.set(personId, person);
+    }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
 
         if ("save".equals(action)) {
             salvarPessoa(req);
+        }
+
+        if ("saveEdit".equals(action)) {
+            editarPessoa(req);
         }
 
         resp.sendRedirect("/pessoas");

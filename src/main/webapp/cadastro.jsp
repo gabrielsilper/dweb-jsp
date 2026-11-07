@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="com.github.gabrielsilper.model.City" %>
+<%@ page import="com.github.gabrielsilper.model.Person" %>
 <%@ page import="java.util.List" %>
 
 <!doctype html>
@@ -10,17 +11,31 @@
     <title>Cadastro de pessoas - JSP</title>
 </head>
 <body>
-    <h1>Cadastro de pessoas com JSP e Servlet</h1>
+    <%
+        Person personToEdit = (Person) request.getAttribute("personToEdit");
+        String personToEditIndex = (String) request.getAttribute("personToEditIndex");
 
-    <form method="POST" action="/pessoas?action=save">
+        boolean isEdit = personToEdit != null;
+
+        String action = isEdit ? "/pessoas?action=saveEdit&person=" + personToEditIndex : "/pessoas?action=save";
+
+        String startTitle = isEdit ? "Editar" : "Cadastro de";
+        String nameValue = isEdit ? personToEdit.getName() : "";
+        String emailValue = isEdit ? personToEdit.getEmail() : "";
+        String phoneValue = isEdit ? personToEdit.getPhone() : "";
+    %>
+
+    <h1><%= startTitle %> pessoa com JSP e Servlet</h1>
+
+    <form method="POST" action="<%= action %>">
         <label for="name">Nome:</label>
-        <input type="text" id="name" name="name">
+        <input type="text" id="name" name="name" value="<%= nameValue %>">
 
         <label for="email">Email:</label>
-        <input type="text" id="email" name="email">
+        <input type="text" id="email" name="email" value="<%= emailValue %>">
 
         <label for="phone">Telefone:</label>
-        <input type="text" id="phone" name="phone">
+        <input type="text" id="phone" name="phone" value="<%= phoneValue %>">
 
         <label for="city">Cidade:</label>
         <select id="city" name="city" required>
@@ -30,9 +45,12 @@
 
             for(int i = 0; i < cityList.size(); i++){
                 City city = cityList.get(i);
+                boolean selected = isEdit
+                    && personToEdit.getCity() != null
+                    && personToEdit.getCity().getName().equals(city.getName());
         %>
 
-            <option value="<%= i %>">
+            <option value="<%= i %>"  <%= selected ? "selected" : "" %>>
                 <%= city.getName() %>
             </option>
 
